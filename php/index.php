@@ -67,30 +67,55 @@
             <article>
                 <h2>Rôles</h2>
 
-            <?php
+                <?php
 
-            // Lire des données dans la BDD
-            $sql = "SELECT `nom_role` FROM role";
-            $requete = $bdd->query($sql);
-            $results = $requete->fetchAll(PDO::FETCH_ASSOC);
+                // Lire des données dans la BDD
+                $sql = "SELECT `id_role`, `nom_role` FROM `role`";
+                $requete = $bdd->query($sql);
+                $results = $requete->fetchAll(PDO::FETCH_ASSOC);
+                ?>
+                <form method="POST">
+                    <fieldset>
+                        <legend>Les rôles</legend>
+                    <?php
+                    foreach ($results as $value) {
+                        foreach ($value as $data) {
+                        }
+                        echo '<div>
+                            <input type="hidden" name="' . 'idRole' . $value['id_role'] . '" value="' . $value['id_role'] . '">
+                            <input type="text" name="nomRole" value="' . $value['nom_role'] . '">
+                            <input type="submit" name="updateRole" value="Modifier">
+                            <input type="submit" name="deleteRole" value="Supprimer">
+                            </div>';
+                    }
+                    if (isset($_POST['deleteRole'])) {
+                        $idRoleDelete = $_POST['idRole' . $value['id_role']];
+                        $sql = "DELETE FROM `role` WHERE `role`.`id_role` = $idRoleDelete";
+                        if ($bdd->query($sql)) {
+                            echo "Le rôle a été supprimé dans la BDD.";
+                        } else {
+                            echo "Erreur lors de la suppression du rôle.";
+                        }
+                    }
 
-            echo '<table>
-                <tr>
-                    <th>Nom du rôle</th>
-                    <th>Action</th>
-                </tr>';
+                    if (isset($_POST['updateRole'])) {
+                        $idRoleUpdate = $_POST['idRole' . $value['id_role']];
+                        $nomRoleUpdate = $_POST['nomRole'];
 
-            foreach ($results as $value) {
-                echo '<tr>';
-                foreach ($value as $data) {
-                    echo '<td>' . $data . '</td>';
+                        $sqlUpdate = "UPDATE `role` SET 
+                      nom_role = '$nomRoleUpdate'
+                      WHERE `role`.`id_role` = $idRoleUpdate";
+
+                        if ($bdd->query($sqlUpdate)) {
+                            echo "Le rôle a été mis à jour dans la BDD.";
+                        } else {
+                            echo "Erreur lors de la mise à jour du rôle.";
+                        }
+                    }
                 }
-                echo '</tr>';
-            }
-        }
-        echo '</table>';
-            ?>
-
+                    ?>
+                    </fieldset>
+                </form>
             </article>
         </main>
 
@@ -138,25 +163,25 @@
                     $requete = $bdd->query($sql);
                     $results = $requete->fetchAll(PDO::FETCH_ASSOC);
                     ?>
-                    <form>
+                    <form method="POST">
                         <fieldset>
                             <legend>Nos centres</legend>
                         <?php
                         foreach ($results as $value) {
                             foreach ($value as $data) {
                             }
-                            echo
-                            '<form method="POST">
-                        <input type="hidden" name="idCentre" value="' . $value['id_centre'] . '">
-                        <input type="text" name="villeCentre" value="' . $value['ville_centre'] . '">
-                        <input type="text" name="adresseCentre" value="' . $value['adresse_centre'] . '">
-                        <input type="number" name="codePostalCentre" value="' . $value['code_postal_centre'] . '">
-                        <input type="submit" name="updateCentre" value="Modifier"' . '">
-                        <input type="submit" name="deleteCentre" value="Supprimer"' . '">
-                    </form>';
+                            echo '<div>
+                                <input type="hidden" name="' . 'idCentre' . $value['id_centre'] . '"value="' . $value['id_centre'] . '">
+                                <input type="text" name="villeCentre" value="' . $value['ville_centre'] . '">
+                                <input type="text" name="adresseCentre" value="' . $value['adresse_centre'] . '">
+                                <input type="number" name="codePostalCentre" value="' . $value['code_postal_centre'] . '">
+                                <input type="submit" name="updateCentre" value="Modifier"' . '">
+                                <input type="submit" name="deleteCentre" value="Supprimer"' . '">
+                        </div>';
                         }
+
                         if (isset($_POST['deleteCentre'])) {
-                            $idCentreDelete = $_POST['idCentre'];
+                            $idCentreDelete = $_POST['idCentre' . $value['id_centre']];
                             $sql = "DELETE FROM centres WHERE `centres`.`id_centre` = $idCentreDelete";
                             if ($bdd->query($sql)) {
                                 echo "Le centre a été supprimé de la BDD.";
@@ -166,7 +191,7 @@
                         }
 
                         if (isset($_POST['updateCentre'])) {
-                            $idCentreUpdate = $_POST['idCentre'];
+                            $idCentreUpdate = $_POST['idCentre' . $value['id_centre']];
                             $villeCentreUpdate = $_POST['villeCentre'];
                             $adresseCentreUpdate = $_POST['adresseCentre'];
                             $codePostalCentreUpdate = $_POST['codePostalCentre'];
@@ -236,34 +261,70 @@
                     <article>
                         <h2>Formations</h2>
 
-                    <?php
+                        <?php
 
-                    // Lire des données dans la BDD formations
-                    $sql = "SELECT `nom_formation`, `duree_formation`, `niveau_sortie_formation`, `description` FROM formations";
-                    $requete = $bdd->query($sql);
-                    $results = $requete->fetchAll(PDO::FETCH_ASSOC);
+                        // Lire des données dans la BDD formations
+                        $sql = "SELECT `id_formation`,`nom_formation`, `duree_formation`, `niveau_sortie_formation`, `description` FROM formations";
+                        $requete = $bdd->query($sql);
+                        $results = $requete->fetchAll(PDO::FETCH_ASSOC);
+                        ?>
+                        <form method="POST">
+                            <fieldset>
+                                <legend>Nos formations</legend>
+                            <?php
+                            foreach ($results as $value) {
+                                foreach ($value as $data) {
+                                }
+                                echo '<div>
+                                <input type="hidden" name="' . 'idFormation' . $value['id_formation'] . '"value="' . $value['id_formation'] . '">
+                                <input type="text" name="nomFormation" value="' . $value['nom_formation'] . '">
+                                <input type="text" name="dureeFormation" value="' . $value['duree_formation'] . '">
+                                <input type="text" name="niveauSortieFormation" value="' . $value['niveau_sortie_formation'] . '">
+                                <input type="text" name="descriptionFormation" value="' . $value['description'] . '">
+                                <input type="submit" name="updateFormation" value="Modifier"' . '">
+                                <input type="submit" name="deleteFormation" value="Supprimer"' . '">
+                        </div>';
+                            }
 
-                    echo '<table>
-                <tr>
-                    <th>Nom</th>
-                    <th>Durée</th>
-                    <th>Niveau de sortie</th>
-                    <th>Description</th>
-                    <th>Action</th>
-                </tr>';
+                            if (isset($_POST['deleteFormation'])) {
+                                $idFormationDelete = $_POST['idFormation' . $value['id_formation']];
+                                $sql = "DELETE FROM formations WHERE `formations`.`id_formation` = $idFormationDelete";
+                                if ($bdd->query($sql)) {
+                                    echo "La formation a été supprimée de la BDD.";
+                                } else {
+                                    echo "Erreur lors de la suppression de la formation.";
+                                }
+                            }
 
-                    foreach ($results as $value) {
-                        echo '<tr>';
-                        foreach ($value as $data) {
-                            echo '<td>' . $data . '</td>';
+                            if (isset($_POST['updateFormation'])) {
+                                $idFormationUpdate = $_POST['idFormation' . $value['id_formation']];
+                                $nomFormationUpdate = $_POST['nomFormation'];
+                                $dureeFormationUpdate = $_POST['dureeFormation'];
+                                $niveauSortieFormationUpdate = $_POST['niveauSortieFormation'];
+                                $descriptionFormationUpdate = $_POST['descriptionFormation'];
+
+                                $sqlUpdate = "UPDATE formations SET 
+                                          nom_formation = '$nomFormationUpdate',
+                                          duree_formation = '$dureeFormationUpdate',
+                                          niveau_sortie_formation = '$niveauSortieFormationUpdate',
+                                          `description` = '$descriptionFormationUpdate'
+                                          WHERE `formations`.`id_formation` = $idFormationUpdate";
+
+                                if ($bdd->query($sqlUpdate)) {
+                                    echo "La formation a été mise à jour dans la BDD.";
+                                } else {
+                                    echo "Erreur lors de la mise à jour de la formation.";
+                                }
+                            }
                         }
-                        echo '</tr>';
-                    }
-                }
-                echo '</table>';
-                    ?>
+                            ?>
+                            </fieldset>
+                        </form>
                     </article>
                 </main>
+
+
+
 
                 <?php
                 // Gestion equipe pedago
@@ -290,8 +351,9 @@
                                 <label for="idRole">Séléctionnez un rôle</label>
                                 <select name="role" id="idRole">
                                     <option value="" hidden>Rôle</option>
-                                    <?php
 
+
+                                    <?php
                                     $sql = "SELECT `id_role`, `nom_role` FROM role";
                                     $requete = $bdd->query($sql);
                                     $results = $requete->fetchAll(PDO::FETCH_ASSOC);
@@ -302,8 +364,8 @@
                                     ?>
                                 </select>
 
-
                                 <input type="submit" name="submitPedago" value="Ajouter">
+
                             </fieldset>
                         </form>
 
@@ -323,33 +385,69 @@
                         <article>
                             <h2>Équipe pédagogique</h2>
 
-                        <?php
-                        // Lire des données dans la BDD formations
-                        $sql = "SELECT `nom_pedagogie`, `prenom_pedagogie`, `mail_pedagogie`, `num_pedagogie`,`nom_role` FROM pedagogie
+                            <?php
+                            // Lire des données dans la BDD formations
+                            $sql = "SELECT `id_pedagogie`, `nom_pedagogie`, `prenom_pedagogie`, `mail_pedagogie`, `num_pedagogie`,`nom_role` FROM pedagogie
                         INNER JOIN `role` ON pedagogie.id_role = role.id_role";
-                        $requete = $bdd->query($sql);
-                        $results = $requete->fetchAll(PDO::FETCH_ASSOC);
+                            $requete = $bdd->query($sql);
+                            $results = $requete->fetchAll(PDO::FETCH_ASSOC);
+                            ?>
+                            <form method="POST">
+                                <fieldset>
+                                    <legend>Nos membres</legend>
+                                <?php
+                                foreach ($results as $value) {
+                                    foreach ($value as $data) {
+                                    }
+                                    echo '<div>
+                                <input type="hidden" name="' . 'idPedago' . $value['id_pedagogie'] . '"value="' . $value['id_pedagogie'] . '">
+                                <input type="text" name="nomPedago" value="' . $value['nom_pedagogie'] . '">
+                                <input type="text" name="prenomPedago" value="' . $value['prenom_pedagogie'] . '">
+                                <input type="text" name="mailPedago" value="' . $value['mail_pedagogie'] . '">
+                                <input type="text" name="telPedago" value="' . $value['num_pedagogie'] . '">
+                                <input type="submit" name="updatePedago" value="Modifier"' . '">
+                                <input type="submit" name="deletePedago" value="Supprimer"' . '">
+                        </div>';
+                                }
 
-                        echo '<table>
-                        <tr>
-                            <th>Nom</th>
-                            <th>Prénom</th>
-                            <th>Mail</th>
-                            <th>Numéro de téléphone</th>
-                            <th>Rôle</th>
-                            <th>Action</th>
-                        </tr>';
+                                if (isset($_POST['deletePedago'])) {
+                                    $idPedagoDelete = $_POST['idPedago' . $value['id_pedagogie']];
+                                    $nomPedagoDelete = $_POST['nomPedago'];
+                                    $prenomPedagoDelete = $_POST['prenomPedago'];
+                                    $mailPedagoDelete = $_POST['mailPedago'];
+                                    $telPedagoDelete = $_POST['telPedago'];
+                                    $sql = "DELETE FROM pedagogie WHERE `pedagogie`.`id_pedagogie` = $idPedagoDelete";
+                                    if ($bdd->query($sql)) {
+                                        echo "Le membre a été supprimé de la BDD.";
+                                    } else {
+                                        echo "Erreur lors de la suppression du membre.";
+                                    }
+                                }
 
-                        foreach ($results as $value) {
-                            echo '<tr>';
-                            foreach ($value as $data) {
-                                echo '<td>' . $data . '</td>';
+                                if (isset($_POST['updatePedago'])) {
+                                    $idPedagoUpdate = $_POST['idPedago' . $value['id_pedagogie']];
+                                    $nomPedagoUpdate = $_POST['nomPedago'];
+                                    $prenomPedagoUpdate = $_POST['prenomPedago'];
+                                    $mailPedagoUpdate = $_POST['mailPedago'];
+                                    $telPedagoUpdate = $_POST['telPedago'];
+
+                                    $sqlUpdate = "UPDATE pedagogie SET 
+                                          nom_pedagogie = '$nomPedagoUpdate',
+                                          prenom_pedagogie = '$prenomPedagoUpdate',
+                                          mail_pedagogie = '$mailPedagoUpdate',
+                                          num_pedagogie = '$telPedagoUpdate'
+                                          WHERE `pedagogie`.`id_pedagogie` = $idPedagoUpdate";
+
+                                    if ($bdd->query($sqlUpdate)) {
+                                        echo "La formation a été mise à jour dans la BDD.";
+                                    } else {
+                                        echo "Erreur lors de la mise à jour de la formation.";
+                                    }
+                                }
                             }
-                            echo '</tr>';
-                        }
-                    }
-                    echo '</table>';
-                        ?>
+                                ?>
+                                </fieldset>
+                            </form>
                         </article>
                     </main>
 
