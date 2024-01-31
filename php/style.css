@@ -1,0 +1,91 @@
+* {
+    font-family: Verdana, Geneva, Tahoma, sans-serif, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+body {
+    margin: 0;
+}
+
+nav {
+    background-color: rgb(58, 58, 58);
+    padding: 20px;
+}
+
+main {
+    display: flex;
+    flex-wrap: wrap;
+    letter-spacing: 2px;
+    margin-top: 20px;
+    width: 100%;
+}
+
+ul {
+    display: flex;
+    justify-content: space-around;
+}
+
+li {
+    list-style-type: none;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.5em;
+}
+
+a:hover {
+    color: rgb(84, 95, 255);
+    transition: ease-in 0.5s;
+}
+
+h1 {
+    text-align: center;
+    letter-spacing: 2px;
+    margin: 0;
+    padding: 0 10px 10px 20px;
+    margin-top: 20px;
+    width: 100%;
+}
+
+form {
+    text-align: center;
+    padding: 10px;
+}
+
+article {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+}
+
+fieldset {
+    padding: 10px;
+    border-radius: 5px;
+}
+
+input,
+select {
+    border-radius: 5px;
+    padding: 5px;
+    text-align: center;
+}
+
+legend {
+    border: 1px solid black;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+table {
+    display: flex;
+    border-collapse: collapse;
+    justify-content: center;
+}
+
+th,
+td {
+    padding: 5px;
+    text-align: center;
+    border: 1px solid black;
+}
