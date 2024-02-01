@@ -7,7 +7,7 @@ body {
 }
 
 nav {
-    background-color: rgb(58, 58, 58);
+    background-color: rgb(54, 13, 237);
     padding: 20px;
 }
 
@@ -51,6 +51,7 @@ h1 {
 form {
     text-align: center;
     padding: 10px;
+    width: 100%;
 }
 
 article {
@@ -78,9 +79,7 @@ legend {
 }
 
 table {
-    display: flex;
     border-collapse: collapse;
-    justify-content: center;
 }
 
 th,
@@ -88,4 +87,5 @@ td {
     padding: 5px;
     text-align: center;
     border: 1px solid black;
+    border-collapse: collapse;
 }
