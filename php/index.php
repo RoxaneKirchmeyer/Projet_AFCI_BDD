@@ -448,6 +448,7 @@
                         if (isset($_GET['type']) && $_GET['type'] == "modifier") {
 
                             $id = $_GET["id"];
+                            // trouver le innerjoin à faire pour récup les datas etrangeres
                             $sqlId = "SELECT * FROM pedagogie WHERE id_pedagogie = $id";
                             $requeteId = $bdd->query($sqlId);
                             $resultsId = $requeteId->fetch(PDO::FETCH_ASSOC);
@@ -612,7 +613,7 @@
                                             FROM `pedagogie`
                                             INNER JOIN `role` 
                                             ON pedagogie.id_role = role.id_role
-                                            WHERE `nom_role` = 'Formateur'";
+                                            WHERE role.id_role = 3";
                                         $requete = $bdd->query($sql);
                                         $results = $requete->fetchAll(PDO::FETCH_ASSOC);
 
@@ -630,6 +631,7 @@
                             if (isset($_GET['type']) && $_GET['type'] == "modifier") {
 
                                 $id = $_GET["id"];
+                                // trouver le innerjoin à faire pour récup les datas etrangeres
                                 $sqlId = "SELECT * FROM `session` WHERE id_session = $id";
                                 $requeteId = $bdd->query($sqlId);
                                 $resultsId = $requeteId->fetch(PDO::FETCH_ASSOC);
@@ -638,9 +640,9 @@
                                     <input type="hidden" name="updateIdSession" value="<?php echo $resultsId['id_session']; ?>">
                                     <input type="text" name="updateNomSession" value="<?php echo $resultsId['nom_session']; ?>">
                                     <input type="date" name="updateDateSession" value="<?php echo $resultsId['date_debut']; ?>">
-                                    <select name="" id="">
-                                        <option value=""></option>
-                                    </select>
+                                    <input type="text" name="updateIdCentreSession" value="<?php echo $resultsId['ville_centre']; ?>">
+                                    <input type="text" name="updateIdFormationSession" value="<?php echo $resultsId['nom_formation']; ?>">
+                                    <input type="text" name="updateIdPedagoSession" value="<?php echo $resultsId['formateur']; ?>">
                                     <input type="submit" name="updateSession" value="Modifier">
                                 </form>
                             <?php
@@ -648,10 +650,17 @@
                                     $updateIdSession = $_POST["updateIdSession"];
                                     $updateNomSession = $_POST["updateNomSession"];
                                     $updateDateSession = $_POST["updateDateSession"];
+                                    $updateIdCentreSession = $_POST["updateIdCentreSession"];
+                                    $updateIdFormationSession = $_POST["updateIdFormationSession"];
+                                    $updateIdPedagoSession = $_POST["updateIdPedagoSession"];
+
                                     $sqlUpdate = "UPDATE `session` 
                                 SET 
                                 `nom_session`='$updateNomSession',
                                 `date_debut`='$updateDateSession',
+                                `id_centre`='$updateIdCentreSession',
+                                `id_formation`='$updateIdFormationSession',
+                                `id_pedagogie`='$updateIdPedagoSession'
                                 WHERE id_session = $updateIdSession";
 
                                     $bdd->query($sqlUpdate);
@@ -677,7 +686,7 @@
                                 <?php
 
                                 // Lire des données dans la BDD formations
-                                $sql = "SELECT `nom_session`, `date_debut`, `ville_centre`, `nom_formation`, CONCAT(`nom_pedagogie`, ' ', `prenom_pedagogie`) AS `formateur` FROM session
+                                $sql = "SELECT `id_session`, `nom_session`, `date_debut`, `ville_centre`, `nom_formation`, CONCAT(`nom_pedagogie`, ' ', `prenom_pedagogie`) AS `formateur` FROM session
                             INNER JOIN centres ON session.id_centre = centres.id_centre
                             INNER JOIN formations ON session.id_formation = formations.id_formation
                             INNER JOIN pedagogie ON session.id_pedagogie = pedagogie.id_pedagogie";
@@ -707,16 +716,16 @@
                                 <tr>
                                 <td>' . $value['nom_session'] . '</td>    
                                 <td>' . $value['date_debut'] . '</td>    
-                                <td>' . $value['centres.ville_centre'] . '</td>    
-                                <td>' . $value['formations.nom_formation'] . '</td>     
-                                <td>' . $value[''] . '</td>     
+                                <td>' . $value['ville_centre'] . '</td>    
+                                <td>' . $value['nom_formation'] . '</td> 
+                                <td>' . $value['formateur'] . '</td> 
                                 <td><button type="button" onclick="window.location.href=\'?page=sessions&type=modifier&id=' . $value['id_session'] . '\'">Modifier</button></td>                                  
                                 <td><input type="submit" name="deleteSession" value="Supprimer"></td>';
                                             }
 
                                             if (isset($_POST['deleteSession'])) {
-                                                $idSessionDelete = $_POST['idSession'];
-                                                $sql = "DELETE FROM session WHERE `session`.`id_session` = $idSessionDelete";
+                                                $idSessionDelete = $_POST['idSession' . $value['id_session']];
+                                                $sql = "DELETE FROM `session` WHERE `session`.`id_session` = $idSessionDelete";
                                                 if ($bdd->query($sql)) {
                                                     echo "Le membre a été supprimé de la BDD.";
                                                 } else {
@@ -779,11 +788,107 @@
                                         <label for="ribApprenant">RIB</label>
                                         <input type="text" name="ribApprenant" id="ribApprenant">
 
+                                        <label for="idRole">Séléctionnez un rôle</label>
+                                        <select name="role" id="idRole">
+                                            <option value="" hidden>Rôle</option>
+
+
+                                            <?php
+                                            $sql = "SELECT `id_role`, `nom_role` FROM role";
+                                            $requete = $bdd->query($sql);
+                                            $results = $requete->fetchAll(PDO::FETCH_ASSOC);
+
+                                            foreach ($results as $value) {
+                                                echo '<option value="' . $value['id_role'] .  '">' . $value['nom_role'] . '</option>';
+                                            }
+                                            ?>
+                                        </select>
+
+                                        <label for="idRole">Sélectionnez une session</label>
+                                        <select name="session" id="idSession">
+                                            <option value="" hidden>Nom de session</option>
+
+
+                                            <?php
+                                            $sql = "SELECT `id_session`, `nom_session` FROM session";
+                                            $requete = $bdd->query($sql);
+                                            $results = $requete->fetchAll(PDO::FETCH_ASSOC);
+
+                                            foreach ($results as $value) {
+                                                echo '<option value="' . $value['id_session'] .  '">' . $value['nom_session'] . '</option>';
+                                            }
+                                            ?>
+                                        </select>
+
+
+
                                         <input type="submit" name="submitApprenant" value="Ajouter">
                                     </fieldset>
                                 </form>
 
                                 <?php
+                                if (isset($_GET['type']) && $_GET['type'] == "modifier") {
+
+                                    $id = $_GET["id"];
+                                    // trouver le innerjoin à faire pour récup les datas etrangeres
+                                    $sqlId = "SELECT * FROM `apprenants` WHERE id_apprenant = $id";
+                                    $requeteId = $bdd->query($sqlId);
+                                    $resultsId = $requeteId->fetch(PDO::FETCH_ASSOC);
+                                ?>
+                                    <form method="POST">
+                                        <input type="hidden" name="updateIdApprenant" value="<?php echo $resultsId['id_apprenant']; ?>">
+                                        <input type="text" name="updateNomApprenant" value="<?php echo $resultsId['nom_apprenant']; ?>">
+                                        <input type="text" name="updatePrenomApprenant" value="<?php echo $resultsId['prenom_apprenant']; ?>">
+                                        <input type="mail" name="updateMailApprenant" value="<?php echo $resultsId['mail_apprenant']; ?>">
+                                        <input type="text" name="updateAdresseApprenant" value="<?php echo $resultsId['adresse_apprenant']; ?>">
+                                        <input type="text" name="updateVilleApprenant" value="<?php echo $resultsId['ville_apprenant']; ?>">
+                                        <input type="text" name="updateCpApprenant" value="<?php echo $resultsId['code_postal_apprenant']; ?>">
+                                        <input type="text" name="updateTelApprenant" value="<?php echo $resultsId['tel_apprenant']; ?>">
+                                        <input type="date" name="updateDateApprenant" value="<?php echo $resultsId['date_naissance_apprenant']; ?>">
+                                        <input type="text" name="updateNiveauApprenant" value="<?php echo $resultsId['niveau_apprenant']; ?>">
+                                        <input type="text" name="updateNumPEApprenant" value="<?php echo $resultsId['num_PE_apprenant']; ?>">
+                                        <input type="text" name="updateNumSecuApprenant" value="<?php echo $resultsId['num_secu_apprenant']; ?>">
+                                        <input type="text" name="updateRibApprenant" value="<?php echo $resultsId['rib_apprenant']; ?>">
+                                        <!-- add les deux select role et session -->
+                                        <input type="submit" name="updateApprenant" value="Modifier">
+                                    </form>
+                                <?php
+                                    if (isset($_POST["updateApprenant"])) {
+                                        $updateIdApprenant = $_POST["updateIdApprenant"];
+                                        $updateNomApprenant = $_POST["updateNomApprenant"];
+                                        $updatePrenomApprenant = $_POST["updatePrenomApprenant"];
+                                        $updateMailApprenant = $_POST["updateMailApprenant"];
+                                        $updateAdresseApprenant = $_POST["updateAdresseApprenant"];
+                                        $updateVilleApprenant = $_POST["updateVilleApprenant"];
+                                        $updateCpApprenant = $_POST["updateCpApprenant"];
+                                        $updateTelApprenant = $_POST["updateTelApprenant"];
+                                        $updateDateApprenant = $_POST["updateDateApprenant"];
+                                        $updateNiveauApprenant = $_POST["updateNiveauApprenant"];
+                                        $updateNumPEApprenant = $_POST["updateNumPEApprenant"];
+                                        $updateNumSecuApprenant = $_POST["updateNumSecuApprenant"];
+                                        $updateRibApprenant = $_POST["updateRibApprenant"];
+                                        // add les deux select role et session
+                                        $sqlUpdate = "UPDATE `apprenants` 
+    SET 
+    `nom_apprenant`='$updateNomApprenant',
+    `prenom_apprenant`='$updatePrenomApprenant',
+    `mail_apprenant`='$updateMailApprenant',
+    `adresse_apprenant`='$updateAdresseApprenant',
+    `ville_apprenant`='$updateVilleApprenant',
+    `code_postal_apprenant`='$updateCpApprenant',
+    `tel_apprenant`='$updateTelApprenant',
+    `date_naissance_apprenant`='$updateDateApprenant',
+    `niveau_apprenant`='$updateNiveauApprenant',
+    `num_PE_apprenant`='$updateNumPEApprenant',
+    `num_secu_apprenant`='$updateNumSecuApprenant',
+    `rib_apprenant`='$updateRibApprenant'
+    -- add les deux select role et session
+    WHERE `id_apprenant` = $updateIdApprenant";
+
+                                        $bdd->query($sqlUpdate);
+                                        echo "Données modifiées";
+                                    }
+                                }
                                 if (isset($_POST['submitApprenant'])) {
                                     $nomApprenant = $_POST['nomApprenant'];
                                     $prenomApprenant = $_POST['prenomApprenant'];
@@ -796,6 +901,7 @@
                                     $niveauApprenant = $_POST['niveauApprenant'];
                                     $numeroPoleEmploiApprenant = $_POST['numeroPoleEmploiApprenant'];
                                     $numeroSecuriteSocialeApprenant = $_POST['numeroSecuriteSocialeApprenant'];
+                                    // add les deux select role et session
                                     $ribApprenant = $_POST['ribApprenant'];
 
                                     $sql =
@@ -811,6 +917,7 @@
                     `niveau_apprenant`, 
                     `num_PE_apprenant`, 
                     `num_secu_apprenant`, 
+                    -- add les deux select role et session
                     `rib_apprenant`
                 ) 
                 VALUES (
@@ -825,6 +932,7 @@
                     '$niveauApprenant',
                     '$numeroPoleEmploiApprenant',
                     '$numeroSecuriteSocialeApprenant',
+                    -- add les deux select role et session
                     '$ribApprenant'
                 )";
 
@@ -836,41 +944,78 @@
 
                                 <article>
                                     <h2>Apprenants</h2>
-                                <?php
-                                // Lire des données dans la BDD
-                                $sql = "SELECT `nom_apprenant`, `prenom_apprenant`, `mail_apprenant`, `adresse_apprenant`, `ville_apprenant`, `code_postal_apprenant`, `tel_apprenant`, `date_naissance_apprenant`, `niveau_apprenant`, `num_PE_apprenant`, `num_secu_apprenant`, `rib_apprenant` FROM `apprenants` ";
-                                $requete = $bdd->query($sql);
-                                $results = $requete->fetchAll(PDO::FETCH_ASSOC);
+                                    <?php
+                                    // Lire des données dans la BDD
+                                    $sql = "SELECT apprenants.*, role.nom_role, session.nom_session
+                                                FROM apprenants
+                                                INNER JOIN role ON apprenants.id_role = role.id_role
+                                                INNER JOIN session ON apprenants.id_session = session.id_session;";
+                                    $requete = $bdd->query($sql);
+                                    $results = $requete->fetchAll(PDO::FETCH_ASSOC);
+                                    ?>
+                                    <form method="POST">
+                                        <fieldset>
+                                            <legend>Nos sessions</legend>
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Nom</th>
+                                                        <th>Prénom</th>
+                                                        <th>Email</th>
+                                                        <th>Adresse</th>
+                                                        <th>Ville</th>
+                                                        <th>Code Postal</th>
+                                                        <th>Téléphone</th>
+                                                        <th>Date de naissance</th>
+                                                        <th>Niveau</th>
+                                                        <th>N° Pôle Emploi</th>
+                                                        <th>N° Sécurité sociale</th>
+                                                        <th>RIB</th>
+                                                        <th>Rôle</th>
+                                                        <th>Session</th>
+                                                        <th>Modification</th>
+                                                        <th>Suppression</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                <?php
+                                                foreach ($results as $value) {
+                                                    echo '
+                                <input type="hidden" name="' . 'idApprenant' . $value['id_apprenant'] . '"value="' . $value['id_apprenant'] . '">
+                                <tr>
+                                <td>' . $value['nom_apprenant'] . '</td>    
+                                <td>' . $value['prenom_apprenant'] . '</td>    
+                                <td>' . $value['mail_apprenant'] . '</td>    
+                                <td>' . $value['adresse_apprenant'] . '</td>    
+                                <td>' . $value['ville_apprenant'] . '</td>    
+                                <td>' . $value['code_postal_apprenant'] . '</td>    
+                                <td>' . $value['tel_apprenant'] . '</td>    
+                                <td>' . $value['date_naissance_apprenant'] . '</td>    
+                                <td>' . $value['niveau_apprenant'] . '</td>    
+                                <td>' . $value['num_PE_apprenant'] . '</td>    
+                                <td>' . $value['num_secu_apprenant'] . '</td>    
+                                <td>' . $value['rib_apprenant'] . '</td>    
+                                <td><button type="button" onclick="window.location.href=\'?page=apprenants&type=modifier&id=' . $value['id_apprenant'] . '\'">Modifier</button></td>                                  
+                                <td><input type="submit" name="deleteApprenant" value="Supprimer"></td>';
+                                                }
+                                                // add les deux select role et session
 
-                                echo '<table>
-                    <tr>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Email</th>
-                        <th>Adresse</th>
-                        <th>Ville</th>
-                        <th>Code Postal</th>
-                        <th>Téléphone</th>
-                        <th>Date de Naissance</th>
-                        <th>Niveau</th>
-                        <th>N° Pôle Emploi</th>
-                        <th>N° Sécurité sociale</th>
-                        <th>RIB</th>
-                        <th>Action</th>
-                    </tr>';
-
-                                foreach ($results as $value) {
-                                    echo '<tr>';
-                                    foreach ($value as $data) {
-                                        echo '<td>' . $data . '</td>';
-                                    }
-                                    echo '</tr>';
-                                }
-                            }
-
-                            echo '</table>';
-
-                                ?>
+                                                if (isset($_POST['deleteApprenant'])) {
+                                                    $idApprenantDelete = $_POST['idApprenant'];
+                                                    $sql = "DELETE FROM apprenants WHERE `apprenants`.`id_apprenant` = $idApprenantDelete";
+                                                    if ($bdd->query($sql)) {
+                                                        echo "Le membre a été supprimé de la BDD.";
+                                                    } else {
+                                                        echo "Erreur lors de la suppression du membre.";
+                                                    }
+                                                }
+                                            }
+                                                ?>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </fieldset>
+                                    </form>
 
                                 </article>
                             </main>
