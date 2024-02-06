@@ -41,12 +41,16 @@ if (isset($_GET["page"]) && $_GET["page"] == "roles") {
         }
 
         if (isset($_POST['submitRole'])) {
+
+            $sql = "INSERT INTO `role`(`nom_role`) VALUES (:nomRole)";
             $nomRole = $_POST['nomRole'];
+            $requete = $bdd->prepare($sql);
 
-            $sql = "INSERT INTO `role`(`nom_role`) VALUES ('$nomRole')";
-            $bdd->query($sql);
+            $requete->bindParam(':nomRole', $nomRole);
 
-            echo "data ajoutée dans la bdd";
+            $requete->execute();
+
+            echo "données ajoutées à la bdd";
         }
         ?>
 

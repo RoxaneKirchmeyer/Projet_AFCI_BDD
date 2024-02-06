@@ -40,7 +40,29 @@ if (isset($_GET["page"]) && $_GET["page"] == "equipe-pedagogique") {
             </fieldset>
         </form>
 
+
         <?php
+        if (isset($_POST['submitPedago'])) {
+            $sql = "INSERT INTO `pedagogie`(`nom_pedagogie`, `prenom_pedagogie`, `mail_pedagogie`, `num_pedagogie`, `id_role`) VALUES (:nomPedago, :prenomPedago, :mailPedago, :telPedago, :role)";
+            $requete = $bdd->prepare($sql);
+
+            $nomPedago = $_POST['nomPedago'];
+            $prenomPedago = $_POST['prenomPedago'];
+            $mailPedago = $_POST['mailPedago'];
+            $telPedago = $_POST['telPedago'];
+            $role = $_POST['role'];
+
+            $requete->bindParam(':nomPedago', $nomPedago);
+            $requete->bindParam(':prenomPedago', $prenomPedago);
+            $requete->bindParam(':mailPedago', $mailPedago);
+            $requete->bindParam(':telPedago', $telPedago);
+            $requete->bindParam(':role', $role);
+            $requete->execute();
+
+            echo "data ajoutée dans la bdd";
+        }
+
+
         if (isset($_GET['type']) && $_GET['type'] == "modifier") {
 
             $id = $_GET["id"];
@@ -91,19 +113,6 @@ if (isset($_GET["page"]) && $_GET["page"] == "equipe-pedagogique") {
                 $bdd->query($sqlUpdate);
                 echo "Données modifiées";
             }
-        }
-
-
-        if (isset($_POST['submitPedago'])) {
-            $nomPedago = $_POST['nomPedago'];
-            $prenomPedago = $_POST['prenomPedago'];
-            $mailPedago = $_POST['mailPedago'];
-            $telPedago = $_POST['telPedago'];
-            $role = $_POST['role'];
-
-            $sql = "INSERT INTO `pedagogie`(`nom_pedagogie`, `prenom_pedagogie`, `mail_pedagogie`, `num_pedagogie`, `id_role`) VALUES ('$nomPedago','$prenomPedago','$mailPedago','$telPedago','$role')";
-            $bdd->query($sql);
-            echo "data ajoutée dans la bdd";
         }
         ?>
         <article>

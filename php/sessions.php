@@ -70,6 +70,27 @@ if (isset($_GET["page"]) && $_GET["page"] == "sessions") {
         </form>
 
         <?php
+        if (isset($_POST['submitSession'])) {
+            $sql = "INSERT INTO `session`(`nom_session`, `date_debut`, `id_centre`, `id_pedagogie`, `id_formation` ) VALUES (:nomSession, :debutSession, :centre, :formateur, :formation)";
+            $requete = $bdd->prepare($sql);
+
+            $nomSession = $_POST['nomSession'];
+            $debutSession = $_POST['debutSession'];
+            $centre = $_POST['centre'];
+            $formation = $_POST['formation'];
+            $formateur = $_POST['formateur'];
+
+            $requete->bindParam(':nomSession', $nomSession);
+            $requete->bindParam(':debutSession', $debutSession);
+            $requete->bindParam(':centre', $centre);
+            $requete->bindParam(':formation', $formation);
+            $requete->bindParam(':formateur', $formateur);
+            $requete->execute();
+
+            echo "data ajoutée dans la bdd";
+        }
+
+
         if (isset($_GET['type']) && $_GET['type'] == "modifier") {
 
             $id = $_GET["id"];
@@ -148,18 +169,6 @@ if (isset($_GET["page"]) && $_GET["page"] == "sessions") {
                 $bdd->query($sqlUpdate);
                 echo "Données modifiées";
             }
-        }
-        if (isset($_POST['submitSession'])) {
-            $nomSession = $_POST['nomSession'];
-            $debutSession = $_POST['debutSession'];
-            $centre = $_POST['centre'];
-            $formation = $_POST['formation'];
-            $formateur = $_POST['formateur'];
-
-            $sql = "INSERT INTO `session`(`nom_session`, `date_debut`, `id_centre`, `id_pedagogie`, `id_formation` ) VALUES ('$nomSession', '$debutSession', $centre, $formateur, $formation)";
-            $bdd->query($sql);
-
-            echo "data ajoutée dans la bdd";
         }
         ?>
         <article>
