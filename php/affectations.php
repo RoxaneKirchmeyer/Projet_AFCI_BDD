@@ -7,11 +7,11 @@ if (isset($_GET["page"]) && $_GET["page"] == "affectations") {
         <h1>Gestion des affectations</h1>
         <form method="POST">
             <fieldset>
-                <legend>Affecter une session à un centre</legend>
+                <legend>Affecter un membre à un centre</legend>
 
-                <label for="nomSession">Choisir une session</label>
+                <label for="nomSession">Nom et rôle</label>
                 <select name="nomSession" id="nomSession">
-                    <option value="" hidden>Session</option>
+                    <option value="" hidden>Nom et rôle</option>
                     <?php
 
                     $sql = "SELECT `id_pedagogie`, `nom_pedagogie`, `prenom_pedagogie`, `nom_role`

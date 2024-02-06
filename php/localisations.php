@@ -7,22 +7,19 @@ if (isset($_GET["page"]) && $_GET["page"] == "localisations") {
         <h1>Gestion des localisations</h1>
         <form method="POST">
             <fieldset>
-                <legend>Affecter un membre de l'équipe pédagogique à un centre</legend>
+                <legend>Affecter une formation à un centre</legend>
 
-                <label for="rolePedagoNomPedago">Nom et rôle du membre</label>
-                <select name="rolePedagoNomPedago" id="rolePedagoNomPedago">
-                    <option value="" hidden>Membre de l'équipe et rôle</option>
+                <label for="nomFormation">Intitulé de la formation</label>
+                <select name="nomFormation" id="nomFormation">
+                    <option value="" hidden>Nom de la formation</option>
                     <?php
 
-                    $sql = "SELECT `id_pedagogie`, `nom_pedagogie`, `prenom_pedagogie`, `nom_role`
-                        FROM `pedagogie`
-                        INNER JOIN `role` ON pedagogie.id_role = role.id_role
-                        WHERE role.id_role BETWEEN 1 AND 3";
+                    $sql = "SELECT `id_formation`, `nom_formation` FROM `formations`";
                     $requete = $bdd->query($sql);
                     $results = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                     foreach ($results as $value) {
-                        echo '<option value="' . $value['id_pedagogie'] . '">' . $value['nom_pedagogie'] . ' ' . $value['prenom_pedagogie'] . ' - ' . $value['nom_role'] . '</option>';
+                        echo '<option value="' . $value['id_formation'] . '">' . $value['nom_formation'] . '</option>';
                     }
                     ?>
                 </select>
@@ -42,20 +39,20 @@ if (isset($_GET["page"]) && $_GET["page"] == "localisations") {
                     ?>
                 </select>
 
-                <input type="submit" name="submitAffectation" value="Ajouter">
+                <input type="submit" name="submitLocalisation" value="Ajouter">
             </fieldset>
         </form>
 
 
         <?php
 
-        if (isset($_POST['submitAffectation'])) {
-            $rolePedagoNomPedago = $_POST['rolePedagoNomPedago'];
+        if (isset($_POST['submitLocalisation'])) {
+            $nomFormation = $_POST['nomFormation'];
             $villeCentre = $_POST['villeCentre'];
 
-            $sql = "INSERT INTO `affecter`(`id_pedagogie`,`id_centre`)
+            $sql = "INSERT INTO `localiser`(`id_formation`,`id_centre`)
                 VALUES (
-                '$rolePedagoNomPedago',
+                '$nomFormation',
                 $villeCentre
                 )";
             $bdd->query($sql);
@@ -71,10 +68,9 @@ if (isset($_GET["page"]) && $_GET["page"] == "localisations") {
             <?php
 
             // Lire des données dans la BDD
-            $sql = "SELECT affecter.id_centre, affecter.id_pedagogie, `ville_centre`,`nom_pedagogie`,`prenom_pedagogie` FROM affecter
-            INNER JOIN pedagogie ON affecter.id_pedagogie = pedagogie.id_pedagogie
-            INNER JOIN centres ON affecter.id_centre = centres.id_centre
-            ORDER BY `affecter`.`id_pedagogie` ASC";
+            $sql = "SELECT localiser.id_centre, localiser.id_formation, `ville_centre`,`nom_formation` FROM localiser
+            INNER JOIN formations ON localiser.id_formation = formations.id_formation
+            INNER JOIN centres ON localiser.id_centre = centres.id_centre";
             $requete = $bdd->query($sql);
             $results = $requete->fetchAll(PDO::FETCH_ASSOC);
             ?>
@@ -84,7 +80,7 @@ if (isset($_GET["page"]) && $_GET["page"] == "localisations") {
                     <table>
                         <thead>
                             <tr>
-                                <th>Nom</th>
+                                <th>Formation</th>
                                 <th>Centre</th>
                                 <th>Suppression</th>
                             </tr>
@@ -95,17 +91,17 @@ if (isset($_GET["page"]) && $_GET["page"] == "localisations") {
                             foreach ($results as $value) {
                                 echo '
                     <tr>
-                    <td>' . $value['nom_pedagogie'] . ' ' . $value['prenom_pedagogie'] . '</td>    
+                    <td>' . $value['nom_formation'] . '</td>    
                     <td>' . $value['ville_centre'] . '</td>                                     
-                    <td><button type="submit" name="deleteAffectation" value="' . $value['id_pedagogie'] . '_' . $value['id_centre'] . '" class="supprimer">Supprimer</button></td>';
+                    <td><button type="submit" name="deleteLocalisation" value="' . $value['id_formation'] . '_' . $value['id_centre'] . '" class="supprimer">Supprimer</button></td>';
                             }
                             ?>
 
 
                         <?php
-                        if (isset($_POST['deleteAffectation'])) {
-                            $idDeleteAffectation = $_POST['deleteAffectation'];
-                            $sql = "DELETE FROM affecter WHERE `affecter`.`id_pedagogie` = $idDeleteAffectation AND `affecter`.`id_centre` = $idDeleteAffectation";
+                        if (isset($_POST['deleteLocalisation'])) {
+                            $idDeleteLocalisation = $_POST['deleteLocalisation'];
+                            $sql = "DELETE FROM localiser WHERE `localiser`.`id_formation` = $idDeleteLocalisation AND `localiser`.`id_centre` = $idDeleteLocalisation";
                             if ($bdd->query($sql)) {
                                 echo "L'affectation a été supprimée dans la BDD.";
                             } else {
