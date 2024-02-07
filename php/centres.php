@@ -26,15 +26,17 @@ if (isset($_GET["page"]) && $_GET["page"] == "centres") {
         if (isset($_GET['type']) && $_GET['type'] == "modifier") {
 
             $id = $_GET["id"];
-            $sqlId = "SELECT * FROM centres WHERE id_centre = $id";
-            $requeteId = $bdd->query($sqlId);
+            $sqlId = "SELECT * FROM centres WHERE id_centre = :id";
+            $requeteId = $bdd->prepare($sqlId);
+            $requeteId->bindParam(':id', $id, PDO::PARAM_INT);
+            $requeteId->execute();
             $resultsId = $requeteId->fetch(PDO::FETCH_ASSOC);
         ?>
             <form method="POST">
-                <input type="hidden" name="updateIdCentre" value="<?php echo $resultsId['id_centre']; ?>">
-                <input type="text" name="updateVilleCentre" value="<?php echo $resultsId['ville_centre']; ?>">
-                <input type="text" name="updateAdresseCentre" value="<?php echo $resultsId['adresse_centre']; ?>">
-                <input type="text" name="updateCpCentre" value="<?php echo $resultsId['code_postal_centre']; ?>">
+                <input type="hidden" name="updateIdCentre" value="<?php echo htmlspecialchars($resultsId['id_centre'], ENT_QUOTES, 'UTF-8'); ?>">
+                <input type="text" name="updateVilleCentre" value="<?php echo htmlspecialchars($resultsId['ville_centre'], ENT_QUOTES, 'UTF-8'); ?>">
+                <input type="text" name="updateAdresseCentre" value="<?php echo htmlspecialchars($resultsId['adresse_centre'], ENT_QUOTES, 'UTF-8'); ?>">
+                <input type="text" name="updateCpCentre" value="<?php echo htmlspecialchars($resultsId['code_postal_centre'], ENT_QUOTES, 'UTF-8'); ?>">
                 <input type="submit" name="updateCentre" value="Modifier">
             </form>
         <?php
@@ -45,16 +47,21 @@ if (isset($_GET["page"]) && $_GET["page"] == "centres") {
                 $updateCpCentre = $_POST["updateCpCentre"];
                 $sqlUpdate = "UPDATE `centres` 
                         SET 
-                        `ville_centre`='$updateVilleCentre', 
-                        `adresse_centre`='$updateAdresseCentre', 
-                        `code_postal_centre`='$updateCpCentre'
-                        WHERE id_centre = $updateIdCentre";
+                        `ville_centre`=:updateVilleCentre, 
+                        `adresse_centre`=:updateAdresseCentre, 
+                        `code_postal_centre`=:updateCpCentre
+                        WHERE id_centre = :updateIdCentre";
 
-                $bdd->query($sqlUpdate);
+                $requeteUpdate = $bdd->prepare($sqlUpdate);
+                $requeteUpdate->bindParam(':updateVilleCentre', $updateVilleCentre, PDO::PARAM_STR);
+                $requeteUpdate->bindParam(':updateAdresseCentre', $updateAdresseCentre, PDO::PARAM_STR);
+                $requeteUpdate->bindParam(':updateCpCentre', $updateCpCentre, PDO::PARAM_STR);
+                $requeteUpdate->bindParam(':updateIdCentre', $updateIdCentre, PDO::PARAM_INT);
+                $requeteUpdate->execute();
+
                 echo "Données modifiées";
             }
         }
-
 
         if (isset($_POST['submitCentre'])) {
             $sql = "INSERT INTO `centres`(`ville_centre`, `adresse_centre`, `code_postal_centre`) VALUES (:villeCentre, :adresseCentre, :cpCentre)";
@@ -64,12 +71,12 @@ if (isset($_GET["page"]) && $_GET["page"] == "centres") {
             $adresseCentre = $_POST['adresseCentre'];
             $cpCentre = $_POST['cpCentre'];
 
-            $requete->bindParam(':villeCentre', $villeCentre);
-            $requete->bindParam(':adresseCentre', $adresseCentre);
-            $requete->bindParam(':cpCentre', $cpCentre);
+            $requete->bindParam(':villeCentre', $villeCentre, PDO::PARAM_STR);
+            $requete->bindParam(':adresseCentre', $adresseCentre, PDO::PARAM_STR);
+            $requete->bindParam(':cpCentre', $cpCentre, PDO::PARAM_STR);
             $requete->execute();
 
-            echo "data ajoutée dans la bdd";
+            echo "données ajoutées à la bdd";
         }
         ?>
 
@@ -102,9 +109,9 @@ if (isset($_GET["page"]) && $_GET["page"] == "centres") {
                                 echo '
                                 <input type="hidden" name="idCentre' . $value['id_centre'] . '" value="' . $value['id_centre'] . '">
                                 <tr>
-                                <td>' . $value['ville_centre'] . '</td>    
-                                <td>' . $value['adresse_centre'] . '</td>    
-                                <td>' . $value['code_postal_centre'] . '</td>    
+                                <td>' . htmlspecialchars($value['ville_centre'], ENT_QUOTES, 'UTF-8') . '</td>    
+                                <td>' . htmlspecialchars($value['adresse_centre'], ENT_QUOTES, 'UTF-8') . '</td>    
+                                <td>' . htmlspecialchars($value['code_postal_centre'], ENT_QUOTES, 'UTF-8') . '</td>    
                                 <td><button type="button" onclick="window.location.href=\'?page=centres&type=modifier&id=' . $value['id_centre'] . '\'">Modifier</button></td>                                  
                                 <td><button type="submit" name="deleteCentre" value="' . $value['id_centre'] . '" class="supprimer">Supprimer</button></td>';
                             }
@@ -113,8 +120,10 @@ if (isset($_GET["page"]) && $_GET["page"] == "centres") {
                         <?php
                         if (isset($_POST['deleteCentre'])) {
                             $idCentreDelete = $_POST['deleteCentre'];
-                            $sql = "DELETE FROM centres WHERE `centres`.`id_centre` = $idCentreDelete";
-                            if ($bdd->query($sql)) {
+                            $sql = "DELETE FROM centres WHERE `centres`.`id_centre` = :idCentreDelete";
+                            $requeteDelete = $bdd->prepare($sql);
+                            $requeteDelete->bindParam(':idCentreDelete', $idCentreDelete, PDO::PARAM_INT);
+                            if ($requeteDelete->execute()) {
                                 echo "Le centre a été supprimé de la BDD.";
                             } else {
                                 echo "Erreur lors de la suppression du centre.";

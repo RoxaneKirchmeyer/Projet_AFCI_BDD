@@ -20,22 +20,28 @@ if (isset($_GET["page"]) && $_GET["page"] == "roles") {
         if (isset($_GET['type']) && $_GET['type'] == "modifier") {
 
             $id = $_GET["id"];
-            $sqlId = "SELECT * FROM role WHERE id_role = $id";
-            $requeteId = $bdd->query($sqlId);
+            $sqlId = "SELECT * FROM role WHERE id_role = :id";
+            $requeteId = $bdd->prepare($sqlId);
+            $requeteId->bindParam(':id', $id, PDO::PARAM_INT);
+            $requeteId->execute();
             $resultsId = $requeteId->fetch(PDO::FETCH_ASSOC);
         ?>
             <form method="POST">
-                <input type="hidden" name="updateIdRole" value="<?php echo $resultsId['id_role']; ?>">
-                <input type="text" name="updateNomRole" value="<?php echo $resultsId['nom_role']; ?>">
+                <input type="hidden" name="updateIdRole" value="<?php echo htmlspecialchars($resultsId['id_role'], ENT_QUOTES, 'UTF-8'); ?>">
+                <input type="text" name="updateNomRole" value="<?php echo htmlspecialchars($resultsId['nom_role'], ENT_QUOTES, 'UTF-8'); ?>">
                 <input type="submit" name="updateRole" value="Modifier">
             </form>
         <?php
             if (isset($_POST["updateRole"])) {
                 $updateIdRole = $_POST["updateIdRole"];
                 $updateNomRole = $_POST["updateNomRole"];
-                $sqlUpdate = "UPDATE `role` SET `nom_role`='$updateNomRole' WHERE id_role = $updateIdRole";
+                $sqlUpdate = "UPDATE `role` SET `nom_role`=:updateNomRole WHERE id_role = :updateIdRole";
 
-                $bdd->query($sqlUpdate);
+                $requeteUpdate = $bdd->prepare($sqlUpdate);
+                $requeteUpdate->bindParam(':updateNomRole', $updateNomRole, PDO::PARAM_STR);
+                $requeteUpdate->bindParam(':updateIdRole', $updateIdRole, PDO::PARAM_INT);
+                $requeteUpdate->execute();
+
                 echo "Données modifiées";
             }
         }
@@ -45,9 +51,7 @@ if (isset($_GET["page"]) && $_GET["page"] == "roles") {
             $sql = "INSERT INTO `role`(`nom_role`) VALUES (:nomRole)";
             $nomRole = $_POST['nomRole'];
             $requete = $bdd->prepare($sql);
-
-            $requete->bindParam(':nomRole', $nomRole);
-
+            $requete->bindParam(':nomRole', $nomRole, PDO::PARAM_STR);
             $requete->execute();
 
             echo "données ajoutées à la bdd";
@@ -82,7 +86,7 @@ if (isset($_GET["page"]) && $_GET["page"] == "roles") {
                                 echo '
                                 <input type="hidden" name="idRole' . $value['id_role'] . '" value="' . $value['id_role'] . '">
                                 <tr>
-                                <td>' . $value['nom_role'] . '</td>    
+                                <td>' . htmlspecialchars($value['nom_role'], ENT_QUOTES, 'UTF-8') . '</td>    
                                 <td><button type="button" onclick="window.location.href=\'?page=roles&type=modifier&id=' . $value['id_role'] . '\'">Modifier</button></td>                                  
                                 <td><button type="submit" name="deleteRole" value="' . $value['id_role'] . '" class="supprimer">Supprimer</button></td>';
                             }
@@ -92,8 +96,10 @@ if (isset($_GET["page"]) && $_GET["page"] == "roles") {
                         <?php
                         if (isset($_POST['deleteRole'])) {
                             $idRoleDelete = $_POST['deleteRole'];
-                            $sql = "DELETE FROM `role` WHERE `role`.`id_role` = $idRoleDelete";
-                            if ($bdd->query($sql)) {
+                            $sql = "DELETE FROM `role` WHERE `role`.`id_role` = :idRoleDelete";
+                            $requeteDelete = $bdd->prepare($sql);
+                            $requeteDelete->bindParam(':idRoleDelete', $idRoleDelete, PDO::PARAM_INT);
+                            if ($requeteDelete->execute()) {
                                 echo "Le rôle a été supprimé dans la BDD.";
                             } else {
                                 echo "Erreur lors de la suppression du rôle.";

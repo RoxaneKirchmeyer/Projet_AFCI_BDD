@@ -17,13 +17,12 @@ if (isset($_GET["page"]) && $_GET["page"] == "equipe-pedagogique") {
                 <label for="mailPedago">Mail :</label>
                 <input type="email" name="mailPedago" id="mailPedago">
 
-                <label for="telPedago">Numéro teléphone :</label>
+                <label for="telPedago">Numéro téléphone :</label>
                 <input type="tel" name="telPedago" id="telPedago">
 
-                <label for="idRole">Séléctionnez un rôle</label>
+                <label for="idRole">Sélectionnez un rôle</label>
                 <select name="role" id="idRole">
                     <option value="" hidden>Rôle</option>
-
 
                     <?php
                     $sql = "SELECT `id_role`, `nom_role` FROM role";
@@ -31,7 +30,7 @@ if (isset($_GET["page"]) && $_GET["page"] == "equipe-pedagogique") {
                     $results = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                     foreach ($results as $value) {
-                        echo '<option value="' . $value['id_role'] .  '">' . $value['nom_role'] . '</option>';
+                        echo '<option value="' . htmlspecialchars($value['id_role'], ENT_QUOTES, 'UTF-8') .  '">' . htmlspecialchars($value['nom_role'], ENT_QUOTES, 'UTF-8') . '</option>';
                     }
                     ?>
                 </select>
@@ -39,7 +38,6 @@ if (isset($_GET["page"]) && $_GET["page"] == "equipe-pedagogique") {
                 <input type="submit" name="submitPedago" value="Ajouter">
             </fieldset>
         </form>
-
 
         <?php
         if (isset($_POST['submitPedago'])) {
@@ -52,34 +50,33 @@ if (isset($_GET["page"]) && $_GET["page"] == "equipe-pedagogique") {
             $telPedago = $_POST['telPedago'];
             $role = $_POST['role'];
 
-            $requete->bindParam(':nomPedago', $nomPedago);
-            $requete->bindParam(':prenomPedago', $prenomPedago);
-            $requete->bindParam(':mailPedago', $mailPedago);
-            $requete->bindParam(':telPedago', $telPedago);
-            $requete->bindParam(':role', $role);
+            $requete->bindParam(':nomPedago', $nomPedago, PDO::PARAM_STR);
+            $requete->bindParam(':prenomPedago', $prenomPedago, PDO::PARAM_STR);
+            $requete->bindParam(':mailPedago', $mailPedago, PDO::PARAM_STR);
+            $requete->bindParam(':telPedago', $telPedago, PDO::PARAM_STR);
+            $requete->bindParam(':role', $role, PDO::PARAM_INT);
             $requete->execute();
 
-            echo "data ajoutée dans la bdd";
+            echo "Données ajoutées à la BDD";
         }
-
 
         if (isset($_GET['type']) && $_GET['type'] == "modifier") {
 
             $id = $_GET["id"];
-            // trouver le innerjoin à faire pour récup les datas etrangeres
-            $sqlId = "SELECT * FROM pedagogie WHERE id_pedagogie = $id";
-            $requeteId = $bdd->query($sqlId);
+            $sqlId = "SELECT * FROM pedagogie WHERE id_pedagogie = :id";
+            $requeteId = $bdd->prepare($sqlId);
+            $requeteId->bindParam(':id', $id, PDO::PARAM_INT);
+            $requeteId->execute();
             $resultsId = $requeteId->fetch(PDO::FETCH_ASSOC);
         ?>
             <form method="POST">
-                <input type="hidden" name="updateNomPedago" value="<?php echo $resultsId['id_pedagogie']; ?>">
-                <input type="text" name="updateNomPedago" value="<?php echo $resultsId['nom_pedagogie']; ?>">
-                <input type="text" name="updatePrenomPedago" value="<?php echo $resultsId['prenom_pedagogie']; ?>">
-                <input type="mail" name="updateMailPedago" value="<?php echo $resultsId['mail_pedagogie']; ?>">
-                <input type="text" name="updateTelPedago" value="<?php echo $resultsId['num_pedagogie']; ?>">
+                <input type="hidden" name="updateIdPedago" value="<?php echo htmlspecialchars($resultsId['id_pedagogie'], ENT_QUOTES, 'UTF-8'); ?>">
+                <input type="text" name="updateNomPedago" value="<?php echo htmlspecialchars($resultsId['nom_pedagogie'], ENT_QUOTES, 'UTF-8'); ?>">
+                <input type="text" name="updatePrenomPedago" value="<?php echo htmlspecialchars($resultsId['prenom_pedagogie'], ENT_QUOTES, 'UTF-8'); ?>">
+                <input type="email" name="updateMailPedago" value="<?php echo htmlspecialchars($resultsId['mail_pedagogie'], ENT_QUOTES, 'UTF-8'); ?>">
+                <input type="tel" name="updateTelPedago" value="<?php echo htmlspecialchars($resultsId['num_pedagogie'], ENT_QUOTES, 'UTF-8'); ?>">
                 <select name="updateRolePedago" id="updateRolePedago">
                     <option value="" hidden>Rôle</option>
-
 
                     <?php
                     $sql = "SELECT `id_role`, `nom_role` FROM role";
@@ -87,7 +84,7 @@ if (isset($_GET["page"]) && $_GET["page"] == "equipe-pedagogique") {
                     $results = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                     foreach ($results as $value) {
-                        echo '<option value="' . $value['id_role'] .  '">' . $value['nom_role'] . '</option>';
+                        echo '<option value="' . htmlspecialchars($value['id_role'], ENT_QUOTES, 'UTF-8') .  '">' . htmlspecialchars($value['nom_role'], ENT_QUOTES, 'UTF-8') . '</option>';
                     }
                     ?>
                 </select>
@@ -103,18 +100,27 @@ if (isset($_GET["page"]) && $_GET["page"] == "equipe-pedagogique") {
                 $updateRolePedago = $_POST["updateRolePedago"];
                 $sqlUpdate = "UPDATE `pedagogie` 
                                 SET 
-                                `nom_pedagogie`='$updateNomPedago',
-                                `prenom_pedagogie`='$updatePrenomPedago',
-                                `mail_pedagogie`='$updateMailPedago',
-                                `num_pedagogie`='$updateTelPedago',
-                                `id_role` = '$updateRolePedago'
-                                WHERE id_pedagogie = $updateIdPedago";
+                                `nom_pedagogie`=:updateNomPedago,
+                                `prenom_pedagogie`=:updatePrenomPedago,
+                                `mail_pedagogie`=:updateMailPedago,
+                                `num_pedagogie`=:updateTelPedago,
+                                `id_role` = :updateRolePedago
+                                WHERE id_pedagogie = :updateIdPedago";
 
-                $bdd->query($sqlUpdate);
+                $requeteUpdate = $bdd->prepare($sqlUpdate);
+                $requeteUpdate->bindParam(':updateNomPedago', $updateNomPedago, PDO::PARAM_STR);
+                $requeteUpdate->bindParam(':updatePrenomPedago', $updatePrenomPedago, PDO::PARAM_STR);
+                $requeteUpdate->bindParam(':updateMailPedago', $updateMailPedago, PDO::PARAM_STR);
+                $requeteUpdate->bindParam(':updateTelPedago', $updateTelPedago, PDO::PARAM_STR);
+                $requeteUpdate->bindParam(':updateRolePedago', $updateRolePedago, PDO::PARAM_INT);
+                $requeteUpdate->bindParam(':updateIdPedago', $updateIdPedago, PDO::PARAM_INT);
+                $requeteUpdate->execute();
+
                 echo "Données modifiées";
             }
         }
         ?>
+
         <article>
             <h2>Équipe pédagogique</h2>
 
@@ -134,42 +140,46 @@ if (isset($_GET["page"]) && $_GET["page"] == "equipe-pedagogique") {
                                 <th>Nom</th>
                                 <th>Prénom</th>
                                 <th>Mail</th>
-                                <th>Numéro teléphone</th>
+                                <th>Numéro téléphone</th>
                                 <th>Rôle</th>
                                 <th>Modification</th>
                                 <th>Suppression</th>
                             </tr>
                         </thead>
                         <tbody>
-                        <?php
-                        foreach ($results as $value) {
-                            echo '
+                            <?php
+                            foreach ($results as $value) {
+                                echo '
                                 <input type="hidden" name="' . 'idPedago' . $value['id_pedagogie'] . '"value="' . $value['id_pedagogie'] . '">
                                 <tr>
-                                <td>' . $value['nom_pedagogie'] . '</td>    
-                                <td>' . $value['prenom_pedagogie'] . '</td>    
-                                <td>' . $value['mail_pedagogie'] . '</td>    
-                                <td>' . $value['num_pedagogie'] . '</td>     
-                                <td>' . $value['nom_role'] . '</td>      
+                                <td>' . htmlspecialchars($value['nom_pedagogie'], ENT_QUOTES, 'UTF-8') . '</td>    
+                                <td>' . htmlspecialchars($value['prenom_pedagogie'], ENT_QUOTES, 'UTF-8') . '</td>    
+                                <td>' . htmlspecialchars($value['mail_pedagogie'], ENT_QUOTES, 'UTF-8') . '</td>    
+                                <td>' . htmlspecialchars($value['num_pedagogie'], ENT_QUOTES, 'UTF-8') . '</td>     
+                                <td>' . htmlspecialchars($value['nom_role'], ENT_QUOTES, 'UTF-8') . '</td>      
                                 <td><button type="button" onclick="window.location.href=\'?page=equipe-pedagogique&type=modifier&id=' . $value['id_pedagogie'] . '\'">Modifier</button></td>                                  
                                 <td><button type="submit" name="deletePedago" value="' . $value['id_pedagogie'] . '" class="supprimer">Supprimer</button></td>';
-                        }
-
-                        if (isset($_POST['deletePedago'])) {
-                            $idPedagoDelete = $_POST['deletePedago'];
-                            $sql = "DELETE FROM pedagogie WHERE `pedagogie`.`id_pedagogie` = $idPedagoDelete";
-                            if ($bdd->query($sql)) {
-                                echo "Le membre a été supprimé de la BDD.";
-                            } else {
-                                echo "Erreur lors de la suppression du membre.";
                             }
-                        }
-                    }
-                        ?>
-                        </tr>
+
+                            if (isset($_POST['deletePedago'])) {
+                                $idPedagoDelete = $_POST['deletePedago'];
+                                $sql = "DELETE FROM pedagogie WHERE `pedagogie`.`id_pedagogie` = :idPedagoDelete";
+                                $requeteDelete = $bdd->prepare($sql);
+                                $requeteDelete->bindParam(':idPedagoDelete', $idPedagoDelete, PDO::PARAM_INT);
+                                if ($requeteDelete->execute()) {
+                                    echo "Le membre a été supprimé de la BDD.";
+                                } else {
+                                    echo "Erreur lors de la suppression du membre.";
+                                }
+                            }
+                            ?>
+                            </tr>
                         </tbody>
                     </table>
                 </fieldset>
             </form>
         </article>
     </main>
+<?php
+}
+?>

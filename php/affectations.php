@@ -9,8 +9,8 @@ if (isset($_GET["page"]) && $_GET["page"] == "affectations") {
             <fieldset>
                 <legend>Affecter un membre à un centre</legend>
 
-                <label for="nomSession">Nom et rôle</label>
-                <select name="nomSession" id="nomSession">
+                <label for="rolePedagoNomPedago">Nom et rôle</label>
+                <select name="rolePedagoNomPedago" id="rolePedagoNomPedago">
                     <option value="" hidden>Nom et rôle</option>
                     <?php
 

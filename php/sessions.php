@@ -14,7 +14,7 @@ if (isset($_GET["page"]) && $_GET["page"] == "sessions") {
                 <label for="debutSession">Date de début :</label>
                 <input type="date" name="debutSession" id="debutSession">
 
-                <label for="idCentre">Séléctionnez un centre</label>
+                <label for="idCentre">Sélectionnez un centre</label>
                 <select name="centre" id="idCentre">
                     <option value="" hidden>Nom du centre</option>
                     <?php
@@ -24,12 +24,12 @@ if (isset($_GET["page"]) && $_GET["page"] == "sessions") {
                     $results = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                     foreach ($results as $value) {
-                        echo '<option value="' . $value['id_centre'] . '">' . 'AFCI' . ' - ' . $value['ville_centre'] . '</option>';
+                        echo '<option value="' . htmlspecialchars($value['id_centre'], ENT_QUOTES, 'UTF-8') . '">' . 'AFCI' . ' - ' . htmlspecialchars($value['ville_centre'], ENT_QUOTES, 'UTF-8') . '</option>';
                     }
                     ?>
                 </select>
 
-                <label for="idFormation">Séléctionnez une formation</label>
+                <label for="idFormation">Sélectionnez une formation</label>
                 <select name="formation" id="idFormation">
                     <option value="" hidden>Nom de la formation</option>
                     <?php
@@ -40,12 +40,12 @@ if (isset($_GET["page"]) && $_GET["page"] == "sessions") {
                     $results = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                     foreach ($results as $value) {
-                        echo '<option value="' . $value['id_formation'] . '">' . $value['nom_formation'] . '</option>';
+                        echo '<option value="' . htmlspecialchars($value['id_formation'], ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($value['nom_formation'], ENT_QUOTES, 'UTF-8') . '</option>';
                     }
                     ?>
                 </select>
 
-                <label for="idFormateur">Séléctionner un formateur</label>
+                <label for="idFormateur">Sélectionner un formateur</label>
                 <select name="formateur" id="idFormateur">
                     <option value="" hidden>Formateur</option>
                     <?php
@@ -60,7 +60,7 @@ if (isset($_GET["page"]) && $_GET["page"] == "sessions") {
                     $results = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                     foreach ($results as $value) {
-                        echo '<option value="' . $value['id_pedagogie'] . '">' . $value['formateur'] . '</option>';
+                        echo '<option value="' . htmlspecialchars($value['id_pedagogie'], ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($value['formateur'], ENT_QUOTES, 'UTF-8') . '</option>';
                     }
                     ?>
                 </select>
@@ -80,28 +80,29 @@ if (isset($_GET["page"]) && $_GET["page"] == "sessions") {
             $formation = $_POST['formation'];
             $formateur = $_POST['formateur'];
 
-            $requete->bindParam(':nomSession', $nomSession);
-            $requete->bindParam(':debutSession', $debutSession);
-            $requete->bindParam(':centre', $centre);
-            $requete->bindParam(':formation', $formation);
-            $requete->bindParam(':formateur', $formateur);
+            $requete->bindParam(':nomSession', $nomSession, PDO::PARAM_STR);
+            $requete->bindParam(':debutSession', $debutSession, PDO::PARAM_STR);
+            $requete->bindParam(':centre', $centre, PDO::PARAM_INT);
+            $requete->bindParam(':formation', $formation, PDO::PARAM_INT);
+            $requete->bindParam(':formateur', $formateur, PDO::PARAM_INT);
             $requete->execute();
 
-            echo "data ajoutée dans la bdd";
+            echo "Données ajoutées à la BDD";
         }
-
 
         if (isset($_GET['type']) && $_GET['type'] == "modifier") {
 
             $id = $_GET["id"];
-            $sqlId = "SELECT * FROM `session` WHERE id_session = $id";
-            $requeteId = $bdd->query($sqlId);
+            $sqlId = "SELECT * FROM `session` WHERE id_session = :id";
+            $requeteId = $bdd->prepare($sqlId);
+            $requeteId->bindParam(':id', $id, PDO::PARAM_INT);
+            $requeteId->execute();
             $resultsId = $requeteId->fetch(PDO::FETCH_ASSOC);
         ?>
             <form method="POST">
-                <input type="hidden" name="updateIdSession" value="<?php echo $resultsId['id_session']; ?>">
-                <input type="text" name="updateNomSession" value="<?php echo $resultsId['nom_session']; ?>">
-                <input type="date" name="updateDateSession" value="<?php echo $resultsId['date_debut']; ?>">
+                <input type="hidden" name="updateIdSession" value="<?php echo htmlspecialchars($resultsId['id_session'], ENT_QUOTES, 'UTF-8'); ?>">
+                <input type="text" name="updateNomSession" value="<?php echo htmlspecialchars($resultsId['nom_session'], ENT_QUOTES, 'UTF-8'); ?>">
+                <input type="date" name="updateDateSession" value="<?php echo htmlspecialchars($resultsId['date_debut'], ENT_QUOTES, 'UTF-8'); ?>">
                 <select name="updateCentreSession" id="idCentre">
                     <?php
 
@@ -111,7 +112,7 @@ if (isset($_GET["page"]) && $_GET["page"] == "sessions") {
 
                     foreach ($results as $value) {
                         $selected = ($value['id_centre'] == $resultsId['id_centre']) ? 'selected' : '';
-                        echo '<option value="' . $value['id_centre'] . '" ' . $selected . '>' . 'AFCI' . ' - ' . $value['ville_centre'] . '</option>';
+                        echo '<option value="' . htmlspecialchars($value['id_centre'], ENT_QUOTES, 'UTF-8') . '" ' . $selected . '>' . 'AFCI' . ' - ' . htmlspecialchars($value['ville_centre'], ENT_QUOTES, 'UTF-8') . '</option>';
                     }
                     ?>
                 </select>
@@ -126,7 +127,7 @@ if (isset($_GET["page"]) && $_GET["page"] == "sessions") {
 
                     foreach ($results as $value) {
                         $selected = ($value['id_formation'] == $resultsId['id_formation']) ? 'selected' : '';
-                        echo '<option value="' . $value['id_formation'] . '" ' . $selected . '>' . $value['nom_formation'] . '</option>';
+                        echo '<option value="' . htmlspecialchars($value['id_formation'], ENT_QUOTES, 'UTF-8') . '" ' . $selected . '>' . htmlspecialchars($value['nom_formation'], ENT_QUOTES, 'UTF-8') . '</option>';
                     }
                     ?>
                 </select>
@@ -143,7 +144,7 @@ if (isset($_GET["page"]) && $_GET["page"] == "sessions") {
 
                     foreach ($results as $value) {
                         $selected = ($value['id_pedagogie'] == $resultsId['id_pedagogie']) ? 'selected' : '';
-                        echo '<option value="' . $value['id_pedagogie'] . '" ' . $selected . '>' . $value['formateur'] . '</option>';
+                        echo '<option value="' . htmlspecialchars($value['id_pedagogie'], ENT_QUOTES, 'UTF-8') . '" ' . $selected . '>' . htmlspecialchars($value['formateur'], ENT_QUOTES, 'UTF-8') . '</option>';
                     }
                     ?>
                 </select>
@@ -159,15 +160,26 @@ if (isset($_GET["page"]) && $_GET["page"] == "sessions") {
                 $updateFormationSession = $_POST['updateFormationSession'];
                 $sqlUpdate = "UPDATE `session` 
                                 SET 
-                                `nom_session`='$updateNomSession',
-                                `date_debut`='$updateDateSession',
-                                `id_centre`='$updateCentreSession',
-                                `id_formation`='$updateFormationSession',
-                                `id_pedagogie`='$updatePedagogieSession'
-                                WHERE id_session = $updateIdSession";
+                                `nom_session`=:updateNomSession,
+                                `date_debut`=:updateDateSession,
+                                `id_centre`=:updateCentreSession,
+                                `id_formation`=:updateFormationSession,
+                                `id_pedagogie`=:updatePedagogieSession
+                                WHERE id_session = :updateIdSession";
 
-                $bdd->query($sqlUpdate);
-                echo "Données modifiées";
+                $requeteUpdate = $bdd->prepare($sqlUpdate);
+                $requeteUpdate->bindParam(':updateIdSession', $updateIdSession, PDO::PARAM_INT);
+                $requeteUpdate->bindParam(':updateNomSession', $updateNomSession, PDO::PARAM_STR);
+                $requeteUpdate->bindParam(':updateDateSession', $updateDateSession, PDO::PARAM_STR);
+                $requeteUpdate->bindParam(':updateCentreSession', $updateCentreSession, PDO::PARAM_INT);
+                $requeteUpdate->bindParam(':updateFormationSession', $updateFormationSession, PDO::PARAM_INT);
+                $requeteUpdate->bindParam(':updatePedagogieSession', $updatePedagogieSession, PDO::PARAM_INT);
+
+                if ($requeteUpdate->execute()) {
+                    echo "Données modifiées";
+                } else {
+                    echo "Erreur lors de la modification des données.";
+                }
             }
         }
         ?>
@@ -200,35 +212,39 @@ if (isset($_GET["page"]) && $_GET["page"] == "sessions") {
                             </tr>
                         </thead>
                         <tbody>
-                        <?php
-                        foreach ($results as $value) {
-                            echo '
+                            <?php
+                            foreach ($results as $value) {
+                                echo '
                                 <input type="hidden" name="' . 'idSession' . $value['id_session'] . '"value="' . $value['id_session'] . '">
                                 <tr>
-                                <td>' . $value['nom_session'] . '</td>    
-                                <td>' . $value['date_debut'] . '</td>    
-                                <td>' . $value['ville_centre'] . '</td>    
-                                <td>' . $value['nom_formation'] . '</td> 
-                                <td>' . $value['formateur'] . '</td> 
+                                <td>' . htmlspecialchars($value['nom_session'], ENT_QUOTES, 'UTF-8') . '</td>    
+                                <td>' . htmlspecialchars($value['date_debut'], ENT_QUOTES, 'UTF-8') . '</td>    
+                                <td>' . htmlspecialchars($value['ville_centre'], ENT_QUOTES, 'UTF-8') . '</td>    
+                                <td>' . htmlspecialchars($value['nom_formation'], ENT_QUOTES, 'UTF-8') . '</td> 
+                                <td>' . htmlspecialchars($value['formateur'], ENT_QUOTES, 'UTF-8') . '</td> 
                                 <td><button type="button" onclick="window.location.href=\'?page=sessions&type=modifier&id=' . $value['id_session'] . '\'">Modifier</button></td>                                  
                                 <td><button type="submit" name="deleteSession" value="' . $value['id_session'] . '" class="supprimer">Supprimer</button></td>';
-                        }
-
-                        if (isset($_POST['deleteSession'])) {
-                            $idSessionDelete = $_POST['deleteSession'];
-                            $sql = "DELETE FROM `session` WHERE `session`.`id_session` = $idSessionDelete";
-                            if ($bdd->query($sql)) {
-                                echo "Le membre a été supprimé de la BDD.";
-                            } else {
-                                echo "Erreur lors de la suppression du membre.";
                             }
-                        }
-                    }
-                        ?>
-                        </tr>
+
+                            if (isset($_POST['deleteSession'])) {
+                                $idSessionDelete = $_POST['deleteSession'];
+                                $sql = "DELETE FROM `session` WHERE `session`.`id_session` = :idSessionDelete";
+                                $requeteDelete = $bdd->prepare($sql);
+                                $requeteDelete->bindParam(':idSessionDelete', $idSessionDelete, PDO::PARAM_INT);
+                                if ($requeteDelete->execute()) {
+                                    echo "Le membre a été supprimé de la BDD.";
+                                } else {
+                                    echo "Erreur lors de la suppression du membre.";
+                                }
+                            }
+                            ?>
+                            </tr>
                         </tbody>
                     </table>
                 </fieldset>
             </form>
         </article>
     </main>
+<?php
+}
+?>
