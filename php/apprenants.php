@@ -299,7 +299,7 @@ if (isset($_GET["page"]) && $_GET["page"] == "apprenants") {
                                 <td>' . htmlspecialchars($value['rib_apprenant'], ENT_QUOTES, 'UTF-8') . '</td> 
                                 <td>' . htmlspecialchars($value['nom_role'], ENT_QUOTES, 'UTF-8') . '</td>
                                 <td>' . htmlspecialchars($value['nom_session'], ENT_QUOTES, 'UTF-8') . '</td>  
-                                <td><button type="button" onclick="window.location.href=\'?page=apprenants&type=modifier&id=' . htmlspecialchars($value['id_apprenant'], ENT_QUOTES, 'UTF-8') . '\'">Modifier</button></td>                                  
+                                <td><button type="button" onclick="window.location.href=\'?page=apprenants&type=modifier&id=' . htmlspecialchars($value['id_apprenant'], ENT_QUOTES, 'UTF-8') . '" class="modifier">Modifier</button></td>                                  
                                 <td><button type="submit" name="deleteApprenant" value="' . htmlspecialchars($value['id_apprenant'], ENT_QUOTES, 'UTF-8') . '" class="supprimer">Supprimer</button></td>';
                         }
 

@@ -12,6 +12,7 @@
     <header>
         <nav>
             <ul>
+                <li><a href="?page=accueil">Accueil</a></li>
                 <li><a href="?page=roles">Rôles</a></li>
                 <li><a href="?page=centres">Centres</a></li>
                 <li><a href="?page=formations">Formations</a></li>
@@ -37,6 +38,8 @@
     $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $bdd->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
+
+    include 'accueil.php';
     include 'roles.php';
     include 'centres.php';
     include 'formations.php';
@@ -44,6 +47,7 @@
     include 'sessions.php';
     include 'apprenants.php';
     include 'affectations.php';
+    
     ?>
 </body>
 

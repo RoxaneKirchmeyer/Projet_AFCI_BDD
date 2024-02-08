@@ -223,7 +223,7 @@ if (isset($_GET["page"]) && $_GET["page"] == "sessions") {
                                 <td>' . htmlspecialchars($value['ville_centre'], ENT_QUOTES, 'UTF-8') . '</td>    
                                 <td>' . htmlspecialchars($value['nom_formation'], ENT_QUOTES, 'UTF-8') . '</td> 
                                 <td>' . htmlspecialchars($value['formateur'], ENT_QUOTES, 'UTF-8') . '</td> 
-                                <td><button type="button" onclick="window.location.href=\'?page=sessions&type=modifier&id=' . $value['id_session'] . '\'">Modifier</button></td>                                  
+                                <td><button type="button" onclick="window.location.href=\'?page=sessions&type=modifier&id=' . $value['id_session'] . '" class="modifier">Modifier</button></td>                                  
                                 <td><button type="submit" name="deleteSession" value="' . $value['id_session'] . '" class="supprimer">Supprimer</button></td>';
                         }
 

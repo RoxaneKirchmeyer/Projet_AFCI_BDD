@@ -157,7 +157,7 @@ if (isset($_GET["page"]) && $_GET["page"] == "equipe-pedagogique") {
                                 <td>' . htmlspecialchars($value['mail_pedagogie'], ENT_QUOTES, 'UTF-8') . '</td>    
                                 <td>' . htmlspecialchars($value['num_pedagogie'], ENT_QUOTES, 'UTF-8') . '</td>     
                                 <td>' . htmlspecialchars($value['nom_role'], ENT_QUOTES, 'UTF-8') . '</td>      
-                                <td><button type="button" onclick="window.location.href=\'?page=equipe-pedagogique&type=modifier&id=' . $value['id_pedagogie'] . '\'">Modifier</button></td>                                  
+                                <td><button type="button" onclick="window.location.href=\'?page=equipe-pedagogique&type=modifier&id=' . $value['id_pedagogie'] . '" class="modifier">Modifier</button></td>                                  
                                 <td><button type="submit" name="deletePedago" value="' . $value['id_pedagogie'] . '" class="supprimer">Supprimer</button></td>';
                             }
 

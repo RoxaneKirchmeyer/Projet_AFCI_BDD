@@ -120,7 +120,7 @@ if (isset($_GET["page"]) && $_GET["page"] == "formations") {
                                         <td>' . htmlspecialchars($value['duree_formation'], ENT_QUOTES, 'UTF-8') . '</td>    
                                         <td>' . htmlspecialchars($value['niveau_sortie_formation'], ENT_QUOTES, 'UTF-8') . '</td>    
                                         <td>' . htmlspecialchars($value['description'], ENT_QUOTES, 'UTF-8') . '</td>    
-                                        <td><button type="button" onclick="window.location.href=\'?page=formations&type=modifier&id=' . $value['id_formation'] . '\'">Modifier</button></td>                                  
+                                        <td><button type="button" onclick="window.location.href=\'?page=formations&type=modifier&id=' . $value['id_formation'] . '" class="modifier">Modifier</button></td>                                  
                                         <td><button type="submit" name="deleteFormation" value="' . $value['id_formation'] . '" class="supprimer">Supprimer</button></td>';
                             }
 

@@ -87,7 +87,7 @@ if (isset($_GET["page"]) && $_GET["page"] == "roles") {
                                 <input type="hidden" name="idRole' . $value['id_role'] . '" value="' . $value['id_role'] . '">
                                 <tr>
                                 <td>' . htmlspecialchars($value['nom_role'], ENT_QUOTES, 'UTF-8') . '</td>    
-                                <td><button type="button" onclick="window.location.href=\'?page=roles&type=modifier&id=' . $value['id_role'] . '\'">Modifier</button></td>                                  
+                                <td><button type="button" onclick="window.location.href=\'?page=roles&type=modifier&id=' . $value['id_role'] . '" class="modifier">Modifier</button></td>                                  
                                 <td><button type="submit" name="deleteRole" value="' . $value['id_role'] . '" class="supprimer">Supprimer</button></td>';
                             }
                             ?>

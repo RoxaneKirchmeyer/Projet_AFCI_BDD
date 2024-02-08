@@ -123,7 +123,7 @@ if (isset($_GET["page"]) && $_GET["page"] == "centres") {
                         <td>' . htmlspecialchars($value['ville_centre'], ENT_QUOTES, 'UTF-8') . '</td>    
                         <td>' . htmlspecialchars($value['adresse_centre'], ENT_QUOTES, 'UTF-8') . '</td>    
                         <td>' . htmlspecialchars($value['code_postal_centre'], ENT_QUOTES, 'UTF-8') . '</td>    
-                        <td><button type="button" onclick="window.location.href=\'?page=centres&type=modifier&id=' . $value['id_centre'] . '\'">Modifier</button></td>                                  
+                        <td><button type="button" onclick="window.location.href=\'?page=centres&type=modifier&id=' . $value['id_centre'] . '" class="modifier">Modifier</button></td>                                  
                         <td><button type="submit" name="deleteCentre" value="' . $value['id_centre'] . '" class="supprimer">Supprimer</button></td>';
                             }
                             ?>
