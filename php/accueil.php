@@ -1,5 +1,4 @@
 <?php
-// Gestion Affectations
 if (isset($_GET["page"]) && $_GET["page"] == "accueil") {
 ?>
 <main>

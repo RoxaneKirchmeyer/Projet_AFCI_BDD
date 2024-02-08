@@ -39,14 +39,11 @@ a:hover {
 }
 
 h1 {
-    text-align: center;
+    text-align: right;
     letter-spacing: 2px;
     margin: 0;
     padding: 0 10px 10px 20px;
     margin-top: 20px;
-    margin-bottom: 100px;
-    width: 100%;
-    text-decoration: underline;
 }
 
 form {
@@ -116,6 +113,7 @@ td {
 
 .supprimer:hover {
     background-color: #5c1700;
+    transition: ease-in 0.5s;
 }
 
 input[type="submit"] {
@@ -124,11 +122,11 @@ input[type="submit"] {
     border: none;
     padding: 5px;
     cursor: pointer;
-
 }
 
 input[type="submit"]:hover {
     background-color: #5d3ad0;
+    transition: ease-in 0.5s;
 }
 
 .modifier {
@@ -141,4 +139,5 @@ input[type="submit"]:hover {
 
 .modifier:hover {
     background-color: #4d4d4d;
+    transition: ease-in 0.5s;
 }
