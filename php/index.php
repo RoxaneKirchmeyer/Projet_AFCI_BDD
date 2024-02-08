@@ -19,7 +19,6 @@
                 <li><a href="?page=sessions">Sessions</a></li>
                 <li><a href="?page=apprenants">Apprenants</a></li>
                 <li><a href="?page=affectations">Affectations</a></li>
-                <li><a href="?page=localisations">Localisations</a></li>
             </ul>
         </nav>
     </header>
@@ -45,8 +44,6 @@
     include 'sessions.php';
     include 'apprenants.php';
     include 'affectations.php';
-    include 'localisations.php'
-
     ?>
 </body>
 

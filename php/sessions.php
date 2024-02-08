@@ -183,6 +183,7 @@ if (isset($_GET["page"]) && $_GET["page"] == "sessions") {
             }
         }
         ?>
+        
         <article>
             <h2>Sessions</h2>
 
@@ -212,9 +213,9 @@ if (isset($_GET["page"]) && $_GET["page"] == "sessions") {
                             </tr>
                         </thead>
                         <tbody>
-                            <?php
-                            foreach ($results as $value) {
-                                echo '
+                        <?php
+                        foreach ($results as $value) {
+                            echo '
                                 <input type="hidden" name="' . 'idSession' . $value['id_session'] . '"value="' . $value['id_session'] . '">
                                 <tr>
                                 <td>' . htmlspecialchars($value['nom_session'], ENT_QUOTES, 'UTF-8') . '</td>    
@@ -224,27 +225,25 @@ if (isset($_GET["page"]) && $_GET["page"] == "sessions") {
                                 <td>' . htmlspecialchars($value['formateur'], ENT_QUOTES, 'UTF-8') . '</td> 
                                 <td><button type="button" onclick="window.location.href=\'?page=sessions&type=modifier&id=' . $value['id_session'] . '\'">Modifier</button></td>                                  
                                 <td><button type="submit" name="deleteSession" value="' . $value['id_session'] . '" class="supprimer">Supprimer</button></td>';
-                            }
+                        }
 
-                            if (isset($_POST['deleteSession'])) {
-                                $idSessionDelete = $_POST['deleteSession'];
-                                $sql = "DELETE FROM `session` WHERE `session`.`id_session` = :idSessionDelete";
-                                $requeteDelete = $bdd->prepare($sql);
-                                $requeteDelete->bindParam(':idSessionDelete', $idSessionDelete, PDO::PARAM_INT);
-                                if ($requeteDelete->execute()) {
-                                    echo "Le membre a été supprimé de la BDD.";
-                                } else {
-                                    echo "Erreur lors de la suppression du membre.";
-                                }
+                        if (isset($_POST['deleteSession'])) {
+                            $idSessionDelete = $_POST['deleteSession'];
+                            $sql = "DELETE FROM `session` WHERE `session`.`id_session` = :idSessionDelete";
+                            $requeteDelete = $bdd->prepare($sql);
+                            $requeteDelete->bindParam(':idSessionDelete', $idSessionDelete, PDO::PARAM_INT);
+                            if ($requeteDelete->execute()) {
+                                echo "Le membre a été supprimé de la BDD.";
+                            } else {
+                                echo "Erreur lors de la suppression du membre.";
                             }
-                            ?>
-                            </tr>
+                        }
+                    }
+                        ?>
+                        </tr>
                         </tbody>
                     </table>
                 </fieldset>
             </form>
         </article>
     </main>
-<?php
-}
-?>

@@ -76,8 +76,19 @@ if (isset($_GET["page"]) && $_GET["page"] == "centres") {
             $requete->bindParam(':cpCentre', $cpCentre, PDO::PARAM_STR);
             $requete->execute();
 
+            $sqlLoca = "INSERT INTO `localiser`(`id_centre`, `id_formation`) VALUES (:centre, :formation)";
+            $requeteLoca = $bdd->prepare($sqlLoca);
+
+            $centre = $_POST['centre'];
+            $formation = $_POST['formation'];
+
+            $requeteLoca->bindParam(':centre', $centre, PDO::PARAM_INT);
+            $requeteLoca->bindParam(':formation', $formation, PDO::PARAM_INT);
+            $requeteLoca->execute();
+
             echo "données ajoutées à la bdd";
         }
+
         ?>
 
         <article>
@@ -107,31 +118,51 @@ if (isset($_GET["page"]) && $_GET["page"] == "centres") {
                             <?php
                             foreach ($results as $value) {
                                 echo '
-                                <input type="hidden" name="idCentre' . $value['id_centre'] . '" value="' . $value['id_centre'] . '">
-                                <tr>
-                                <td>' . htmlspecialchars($value['ville_centre'], ENT_QUOTES, 'UTF-8') . '</td>    
-                                <td>' . htmlspecialchars($value['adresse_centre'], ENT_QUOTES, 'UTF-8') . '</td>    
-                                <td>' . htmlspecialchars($value['code_postal_centre'], ENT_QUOTES, 'UTF-8') . '</td>    
-                                <td><button type="button" onclick="window.location.href=\'?page=centres&type=modifier&id=' . $value['id_centre'] . '\'">Modifier</button></td>                                  
-                                <td><button type="submit" name="deleteCentre" value="' . $value['id_centre'] . '" class="supprimer">Supprimer</button></td>';
+                        <input type="hidden" name="idCentre' . $value['id_centre'] . '" value="' . $value['id_centre'] . '">
+                        <tr>
+                        <td>' . htmlspecialchars($value['ville_centre'], ENT_QUOTES, 'UTF-8') . '</td>    
+                        <td>' . htmlspecialchars($value['adresse_centre'], ENT_QUOTES, 'UTF-8') . '</td>    
+                        <td>' . htmlspecialchars($value['code_postal_centre'], ENT_QUOTES, 'UTF-8') . '</td>    
+                        <td><button type="button" onclick="window.location.href=\'?page=centres&type=modifier&id=' . $value['id_centre'] . '\'">Modifier</button></td>                                  
+                        <td><button type="submit" name="deleteCentre" value="' . $value['id_centre'] . '" class="supprimer">Supprimer</button></td>';
                             }
                             ?>
+                        </tbody>
+                    </table>
+                </fieldset>
+            </form>
 
+            <h2>Localisations</h2>
+            <?php
+            // Lire des données dans la BDD formations
+            $sql = "SELECT localiser.id_centre, localiser.id_formation, `ville_centre`,`nom_formation` FROM localiser
+            INNER JOIN formations ON localiser.id_formation = formations.id_formation
+            INNER JOIN centres ON localiser.id_centre = centres.id_centre";
+            $requete = $bdd->query($sql);
+            $results = $requete->fetchAll(PDO::FETCH_ASSOC);
+            ?>
+            <form method="POST">
+                <fieldset>
+                    <legend>Nos sessions</legend>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Formation</th>
+                                <th>Centre</th>
+                                <th>Suppression</th>
+                            </tr>
+                        </thead>
+                        <tbody>
                         <?php
-                        if (isset($_POST['deleteCentre'])) {
-                            $idCentreDelete = $_POST['deleteCentre'];
-                            $sql = "DELETE FROM centres WHERE `centres`.`id_centre` = :idCentreDelete";
-                            $requeteDelete = $bdd->prepare($sql);
-                            $requeteDelete->bindParam(':idCentreDelete', $idCentreDelete, PDO::PARAM_INT);
-                            if ($requeteDelete->execute()) {
-                                echo "Le centre a été supprimé de la BDD.";
-                            } else {
-                                echo "Erreur lors de la suppression du centre.";
-                            }
+                        foreach ($results as $value) {
+                            echo '
+                        <tr>
+                        <td>' . $value['nom_formation'] . '</td>    
+                        <td>' . $value['ville_centre'] . '</td>                                     
+                        <td><button type="submit" name="deleteLocalisation" value="' . $value['id_formation'] . '_' . $value['id_centre'] . '" class="supprimer">Supprimer</button></td>';
                         }
                     }
                         ?>
-                        </tr>
                         </tbody>
                     </table>
                 </fieldset>
