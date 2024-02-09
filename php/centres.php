@@ -96,7 +96,11 @@ if (isset($_GET["page"]) && $_GET["page"] == "centres") {
 
             <?php
             // Lire des données dans la BDD centre
-            $sql = "SELECT `id_centre`,`ville_centre`, `adresse_centre`, `code_postal_centre` FROM centres";
+            function affichage($table){
+                return "SELECT * FROM $table";
+            }
+
+            $sql = affichage("`centres`");
             $requete = $bdd->query($sql);
             $results = $requete->fetchAll(PDO::FETCH_ASSOC);
             ?>

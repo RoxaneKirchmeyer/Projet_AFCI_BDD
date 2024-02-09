@@ -93,7 +93,11 @@ if (isset($_GET["page"]) && $_GET["page"] == "formations") {
 
             <?php
             // Lire des données dans la BDD formations
-            $sql = "SELECT `id_formation`,`nom_formation`, `duree_formation`, `niveau_sortie_formation`, `description` FROM formations";
+            function affichage($table){
+                return "SELECT * FROM $table";
+                }
+                
+                $sql= affichage("`formations`");
             $requete = $bdd->query($sql);
             $results = $requete->fetchAll(PDO::FETCH_ASSOC);
             ?>

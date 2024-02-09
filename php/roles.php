@@ -68,11 +68,11 @@ if (isset($_GET["page"]) && $_GET["page"] == "roles") {
             // Lire des données dans la BDD
             function affichage($table){
                 return "SELECT * FROM $table";
-                }
-                
-                $sql= affichage("`role`");
+            }
 
-            
+            $sql = affichage("`role`");
+
+
             $requete = $bdd->query($sql);
             $results = $requete->fetchAll(PDO::FETCH_ASSOC);
             ?>

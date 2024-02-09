@@ -126,11 +126,17 @@ if (isset($_GET["page"]) && $_GET["page"] == "equipe-pedagogique") {
 
             <?php
             // Lire des données dans la BDD formations
-            $sql = "SELECT `id_pedagogie`, `nom_pedagogie`, `prenom_pedagogie`, `mail_pedagogie`, `num_pedagogie`,`nom_role` FROM pedagogie
-                        INNER JOIN `role` ON pedagogie.id_role = role.id_role";
+            function affichage($table){
+                return "SELECT * ,`nom_role` FROM $table
+                INNER JOIN `role` ON pedagogie.id_role = role.id_role";
+            }
+
+            $sql = affichage("`pedagogie`");
+
             $requete = $bdd->query($sql);
             $results = $requete->fetchAll(PDO::FETCH_ASSOC);
             ?>
+            
             <form method="POST">
                 <fieldset>
                     <legend>Nos membres</legend>

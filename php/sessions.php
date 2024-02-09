@@ -183,17 +183,22 @@ if (isset($_GET["page"]) && $_GET["page"] == "sessions") {
             }
         }
         ?>
-        
+
         <article>
             <h2>Sessions</h2>
 
             <?php
-
             // Lire des données dans la BDD formations
-            $sql = "SELECT `id_session`, `nom_session`, `date_debut`, `ville_centre`, `nom_formation`, CONCAT(`nom_pedagogie`, ' ', `prenom_pedagogie`) AS `formateur` FROM session
-                            INNER JOIN centres ON session.id_centre = centres.id_centre
+
+            function affichage($table){
+                return "SELECT * , `ville_centre`, `nom_formation`, CONCAT(`nom_pedagogie`, ' ', `prenom_pedagogie`) AS `formateur` FROM $table
+                INNER JOIN centres ON session.id_centre = centres.id_centre
                             INNER JOIN formations ON session.id_formation = formations.id_formation
                             INNER JOIN pedagogie ON session.id_pedagogie = pedagogie.id_pedagogie";
+            }
+
+            $sql = affichage("`session`");
+            
             $requete = $bdd->query($sql);
             $results = $requete->fetchAll(PDO::FETCH_ASSOC);
             ?>

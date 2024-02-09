@@ -71,10 +71,15 @@ if (isset($_GET["page"]) && $_GET["page"] == "affectations") {
             <?php
 
             // Lire des données dans la BDD
-            $sql = "SELECT affecter.id_centre, affecter.id_pedagogie, `ville_centre`,`nom_pedagogie`,`prenom_pedagogie` FROM affecter
-            INNER JOIN pedagogie ON affecter.id_pedagogie = pedagogie.id_pedagogie
-            INNER JOIN centres ON affecter.id_centre = centres.id_centre
-            ORDER BY `affecter`.`id_pedagogie` ASC";
+            function affichage($table){
+                return "SELECT *, `ville_centre`,`nom_pedagogie`,`prenom_pedagogie` FROM $table
+                INNER JOIN pedagogie ON affecter.id_pedagogie = pedagogie.id_pedagogie
+                INNER JOIN centres ON affecter.id_centre = centres.id_centre
+                ORDER BY `affecter`.`id_pedagogie` ASC";
+            }
+
+            $sql = affichage("`affecter`");
+
             $requete = $bdd->query($sql);
             $results = $requete->fetchAll(PDO::FETCH_ASSOC);
             ?>

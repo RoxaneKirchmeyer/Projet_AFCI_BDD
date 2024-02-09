@@ -246,12 +246,16 @@ if (isset($_GET["page"]) && $_GET["page"] == "apprenants") {
 
         <article>
             <h2>Apprenants</h2>
+
             <?php
             // Lire des données dans la BDD
-            $sql = "SELECT apprenants.*, role.nom_role, session.nom_session
-            FROM apprenants
-            INNER JOIN role ON apprenants.id_role = role.id_role
-            INNER JOIN session ON apprenants.id_session = session.id_session;";
+            function affichage($table){
+                return "SELECT *, role.nom_role, session.nom_session FROM $table
+                INNER JOIN role ON apprenants.id_role = role.id_role
+                INNER JOIN session ON apprenants.id_session = session.id_session;";
+            }
+            $sql = affichage("`apprenants`");
+
             $requete = $bdd->query($sql);
             $results = $requete->fetchAll(PDO::FETCH_ASSOC);
             ?>
