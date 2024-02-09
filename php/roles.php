@@ -17,6 +17,17 @@ if (isset($_GET["page"]) && $_GET["page"] == "roles") {
         </form>
 
         <?php
+        if (isset($_POST['submitRole'])) {
+
+            $sql = "INSERT INTO `role`(`nom_role`) VALUES (:nomRole)";
+            $nomRole = $_POST['nomRole'];
+            $requete = $bdd->prepare($sql);
+            $requete->bindParam(':nomRole', $nomRole, PDO::PARAM_STR);
+            $requete->execute();
+
+            echo "données ajoutées à la bdd";
+        }
+
         if (isset($_GET['type']) && $_GET['type'] == "modifier") {
 
             $id = $_GET["id"];
@@ -46,16 +57,7 @@ if (isset($_GET["page"]) && $_GET["page"] == "roles") {
             }
         }
 
-        if (isset($_POST['submitRole'])) {
 
-            $sql = "INSERT INTO `role`(`nom_role`) VALUES (:nomRole)";
-            $nomRole = $_POST['nomRole'];
-            $requete = $bdd->prepare($sql);
-            $requete->bindParam(':nomRole', $nomRole, PDO::PARAM_STR);
-            $requete->execute();
-
-            echo "données ajoutées à la bdd";
-        }
         ?>
 
         <article>
@@ -64,7 +66,13 @@ if (isset($_GET["page"]) && $_GET["page"] == "roles") {
             <?php
 
             // Lire des données dans la BDD
-            $sql = "SELECT `id_role`, `nom_role` FROM `role`";
+            function affichage($table){
+                return "SELECT * FROM $table";
+                }
+                
+                $sql= affichage("`role`");
+
+            
             $requete = $bdd->query($sql);
             $results = $requete->fetchAll(PDO::FETCH_ASSOC);
             ?>

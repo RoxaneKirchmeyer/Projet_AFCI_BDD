@@ -38,6 +38,10 @@
     $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $bdd->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
+    function affichage($table){
+        return "SELECT * FROM $table";
+        }
+
 
     include 'accueil.php';
     include 'roles.php';
